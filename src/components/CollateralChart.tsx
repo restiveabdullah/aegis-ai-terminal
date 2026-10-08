@@ -27,10 +27,16 @@ export function CollateralChart({
   asset,
   livePrice,
   markers,
+  dark = false,
+  heightClass = "h-56",
+  showHeader = true,
 }: {
   asset: AssetMeta;
   livePrice: number;
   markers: HedgeMarker[];
+  dark?: boolean;
+  heightClass?: string;
+  showHeader?: boolean;
 }) {
   const [tf, setTf] = useState<Timeframe>(DEFAULT_TIMEFRAME);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -42,7 +48,7 @@ export function CollateralChart({
   const seriesStartRef = useRef<number>(0);
   const [prevClose, setPrevClose] = useState(asset.refPrice);
 
-  // Create chart once; timeframe switches only swap series data.
+  // Create chart once per theme; timeframe switches only swap series data.
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -54,15 +60,26 @@ export function CollateralChart({
         fontFamily: "var(--font-jetbrains), ui-monospace, monospace",
         attributionLogo: false,
       },
-      grid: {
-        vertLines: { color: "#f1f5f9" },
-        horzLines: { color: "#f1f5f9" },
-      },
+      grid: dark
+        ? {
+            vertLines: { color: "rgba(51,65,85,0.35)" },
+            horzLines: { color: "rgba(51,65,85,0.35)" },
+          }
+        : {
+            vertLines: { color: "#f1f5f9" },
+            horzLines: { color: "#f1f5f9" },
+          },
       rightPriceScale: { borderVisible: false },
       timeScale: { borderVisible: false, timeVisible: false, rightOffset: 4 },
       crosshair: {
-        vertLine: { color: "#cbd5e1", labelBackgroundColor: "#4f46e5" },
-        horzLine: { color: "#cbd5e1", labelBackgroundColor: "#4f46e5" },
+        vertLine: {
+          color: dark ? "#334155" : "#cbd5e1",
+          labelBackgroundColor: "#4f46e5",
+        },
+        horzLine: {
+          color: dark ? "#334155" : "#cbd5e1",
+          labelBackgroundColor: "#4f46e5",
+        },
       },
       width: el.clientWidth,
       height: el.clientHeight,
@@ -97,7 +114,7 @@ export function CollateralChart({
       volumeRef.current = null;
       markersRef.current = null;
     };
-  }, []);
+  }, [dark]);
 
   // Swap series data when the asset or timeframe changes (canvas preserved).
   useEffect(() => {
@@ -175,42 +192,50 @@ export function CollateralChart({
   const up = dayDelta >= 0;
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-3">
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex min-w-0 items-baseline gap-1.5">
-          <span className="num text-sm font-semibold text-slate-900">{asset.symbol}</span>
-          <span className="truncate text-xs text-slate-500">
-            {asset.company} · {asset.sector}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          {/* Timeframe switcher */}
-          <div className="inline-flex items-center gap-0.5 rounded-lg bg-slate-100 p-0.5">
-            {TIMEFRAMES.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTf(t)}
-                className={`num rounded-md px-2 py-1 text-[11px] font-medium transition ${
-                  tf.id === t.id
-                    ? "bg-white text-indigo-600 shadow-sm"
-                    : "text-slate-500 hover:text-slate-900"
-                }`}
-              >
-                {t.label}
-              </button>
-            ))}
+    <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+      {showHeader && (
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex min-w-0 items-baseline gap-1.5">
+            <span className="num text-sm font-semibold text-slate-900 dark:text-slate-100">
+              {asset.symbol}
+            </span>
+            <span className="truncate text-xs text-slate-500 dark:text-slate-400">
+              {asset.company} · {asset.sector}
+            </span>
           </div>
-          <span className="num text-sm font-semibold text-slate-900">{fmtNum(livePrice)}</span>
-          <span
-            className={`num inline-flex items-center rounded-full px-1.5 py-0.5 text-[11px] font-medium ${
-              up ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"
-            }`}
-          >
-            {fmtSignedPct(dayDelta)}
-          </span>
+          <div className="flex items-center gap-2">
+            {/* Timeframe switcher */}
+            <div className="inline-flex items-center gap-0.5 rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
+              {TIMEFRAMES.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setTf(t)}
+                  className={`num rounded-md px-2 py-1 text-[11px] font-medium transition ${
+                    tf.id === t.id
+                      ? "bg-white text-indigo-600 shadow-sm dark:bg-slate-900 dark:text-indigo-400"
+                      : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+            <span className="num text-sm font-semibold text-slate-900 dark:text-slate-100">
+              {fmtNum(livePrice)}
+            </span>
+            <span
+              className={`num inline-flex items-center rounded-full px-1.5 py-0.5 text-[11px] font-medium ${
+                up
+                  ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
+                  : "bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400"
+              }`}
+            >
+              {fmtSignedPct(dayDelta)}
+            </span>
+          </div>
         </div>
-      </div>
-      <div ref={containerRef} className="h-56 w-full" />
+      )}
+      <div ref={containerRef} className={`w-full ${heightClass}`} />
     </div>
   );
 }

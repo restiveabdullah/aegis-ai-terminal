@@ -18,16 +18,16 @@ function TapeItem({
   const color =
     delta != null
       ? delta >= 0
-        ? "text-emerald-600"
-        : "text-rose-600"
+        ? "text-emerald-600 dark:text-emerald-400"
+        : "text-rose-600 dark:text-rose-400"
       : tone === "emerald"
-        ? "text-emerald-600"
+        ? "text-emerald-600 dark:text-emerald-400"
         : tone === "rose"
-          ? "text-rose-600"
-          : "text-slate-800";
+          ? "text-rose-600 dark:text-rose-400"
+          : "text-slate-800 dark:text-slate-200";
   return (
     <span className="mx-4 inline-flex items-center gap-1.5 whitespace-nowrap">
-      <span className="text-slate-500">{label}</span>
+      <span className="text-slate-500 dark:text-slate-400">{label}</span>
       <span className={`num ${color}`}>{value}</span>
       {delta != null &&
         (delta >= 0 ? (
@@ -36,7 +36,7 @@ function TapeItem({
           <TrendingDown className="h-3 w-3 text-rose-500" />
         ))}
       {delta != null && <span className={`num ${color}`}>{fmtSignedPct(delta)}</span>}
-      <span className="ml-3 text-slate-300">·</span>
+      <span className="ml-3 text-slate-300 dark:text-slate-700">·</span>
     </span>
   );
 }
@@ -80,15 +80,15 @@ export function TickerTape({
   ];
 
   return (
-    <div className="aegis-panel relative h-9 shrink-0 overflow-hidden">
+    <div className="relative h-9 shrink-0 overflow-hidden border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
       <div className="tape-track absolute left-0 top-0 flex h-full items-center text-[11px]">
         <div className="flex items-center">{items}</div>
         <div className="flex items-center" aria-hidden>
           {items}
         </div>
       </div>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-14 bg-gradient-to-r from-white to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-14 bg-gradient-to-l from-white to-transparent" />
+      <div className="tape-fade-l pointer-events-none absolute inset-y-0 left-0 w-14" />
+      <div className="tape-fade-r pointer-events-none absolute inset-y-0 right-0 w-14" />
     </div>
   );
 }

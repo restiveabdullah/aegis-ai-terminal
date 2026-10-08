@@ -13,19 +13,19 @@ export default function Error({
     <div className="flex min-h-screen items-center justify-center p-6">
       <div className="aegis-panel w-full max-w-md p-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-rose-200 bg-rose-50">
-            <TriangleAlert className="h-5 w-5 text-rose-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 dark:border-rose-500/25 dark:bg-rose-500/10">
+            <TriangleAlert className="h-5 w-5 text-rose-600 dark:text-rose-400" />
           </div>
           <div>
-            <div className="text-sm font-semibold text-slate-900">
+            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
               Terminal fault — render pipeline interrupted
             </div>
-            <div className="mt-0.5 text-xs text-slate-500">
+            <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
               The Aegis watchdog caught an unhandled exception
             </div>
           </div>
         </div>
-        <div className="num mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs leading-relaxed text-slate-600">
+        <div className="num mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs leading-relaxed text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
           {error.message || "unknown fault"}
           {error.digest && <div className="mt-1 text-slate-400">digest · {error.digest}</div>}
         </div>
